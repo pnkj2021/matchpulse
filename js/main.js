@@ -5,6 +5,7 @@
   const demoMatches = data.matches.slice();
   const SPORT_SCORE_URL = "https://sportscore.com/api/widget/matches/?sport=cricket&limit=12&src=matchpulse";
   const REFRESH_INTERVAL = 60000;
+  const REQUEST_TIMEOUT = 6000;
   const STORAGE_KEYS = {
     follows: "matchpulse-followed-teams",
     preferences: "matchpulse-preferences",
@@ -17,8 +18,6 @@
   const state = {
     selectedId: data.matches.some((match) => match.id === storedPreferences.selectedId)
       ? storedPreferences.selectedId : data.matches[0].id,
-    mode: storedPreferences.mode === "expert" ? "expert" : "simple",
-    newsFilter: storedPreferences.newsFilter || "All",
     scoreSource: "demo",
     lastUpdated: null
   };
@@ -48,9 +47,7 @@
 
   function savePreferences() {
     writeStoredJson(STORAGE_KEYS.preferences, {
-      selectedId: state.selectedId,
-      mode: state.mode,
-      newsFilter: state.newsFilter
+      selectedId: state.selectedId
     });
   }
 
@@ -82,6 +79,15 @@
     }
   }
 
+  function safeImageUrl(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" ? url.href : "";
+    } catch (_) {
+      return "";
+    }
+  }
+
   function mapSportScoreMatch(match, index, updated) {
     const status = match.status === "finished"
       ? "complete"
@@ -105,41 +111,15 @@
       series: match.competition || "Cricket",
       venue: "SportScore cricket feed",
       teams: [
-        { name: match.home, short: shortTeamName(match.home), score: homeScore, overs: "" },
-        { name: match.away, short: shortTeamName(match.away), score: awayScore, overs: "" }
+        { name: match.home, short: shortTeamName(match.home), score: homeScore, overs: "", logo: safeImageUrl(match.home_logo) },
+        { name: match.away, short: shortTeamName(match.away), score: awayScore, overs: "", logo: safeImageUrl(match.away_logo) }
       ],
       state: statusText,
       cardSummary: statusText,
       followTeam: match.home,
-      pulse: 50,
-      pulseCopy: "Score and match status are available. A confidence index needs ball-by-ball data, which this feed does not currently provide.",
-      momentumTitle: "Momentum data is not available for this match",
-      momentum: Array(12).fill(0),
-      momentumLabels: Array.from({ length: 12 }, (_, itemIndex) => String(itemIndex + 1)),
-      insights: {
-        simple: {
-          caption: "SportScore currently supplies the score and match status, but not the ball-level events needed to calculate honest momentum.",
-          title: "Waiting for ball-by-ball context",
-          copy: "MatchPulse will not infer a turning point from the total alone. Scores continue to update while deeper analysis remains unavailable.",
-          stats: [["Feed status", sourceStatus], ["Data depth", "Score only"]]
-        },
-        expert: {
-          caption: "Control percentage, rolling expected runs, false-shot rate, and win probability cannot be calculated from aggregate scores alone.",
-          title: "No analytical event stream is present",
-          copy: "An expert model requires delivery-level timestamps and outcomes. Until those fields are available, MatchPulse deliberately avoids synthetic metrics.",
-          stats: [["Provider", "SportScore"], ["Refresh", "60 seconds"]]
-        }
-      },
-      turningOver: "Data availability",
       catchUp: [
         ["Score", `${match.home} ${homeScore}; ${match.away} ${awayScore}.`],
-        ["Status", statusText],
-        ["Context", "Ball-by-ball analysis is unavailable from the current SportScore response."]
-      ],
-      timeline: [
-        ["Feed", sourceStatus, sourceMessage],
-        ["Start", readableTime(match.time), match.competition || "Cricket fixture"],
-        ["Analysis", "Awaiting events", "Momentum and turning points need ball-level match data."]
+        ["Status", statusText]
       ],
       sourceMessage
     };
@@ -221,7 +201,13 @@
           <span class="card-series">${escapeHtml(match.series)}</span>
         </span>
         <span class="card-teams">
-          ${match.teams.map((team) => `<span class="card-team"><span>${escapeHtml(team.short)}</span><span class="card-score">${escapeHtml(team.score)}</span></span>`).join("")}
+          ${match.teams.map((team) => `<span class="card-team">
+            <span class="card-team-name">
+              <span class="team-mark">${team.logo ? `<img src="${escapeHtml(team.logo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : escapeHtml(team.short.slice(0, 2))}</span>
+              <span>${escapeHtml(team.short)}</span>
+            </span>
+            <span class="card-score">${escapeHtml(team.score)}</span>
+          </span>`).join("")}
         </span>
         <span class="card-result">${escapeHtml(match.cardSummary)}</span>
       </button>`).join("");
@@ -234,36 +220,16 @@
     el("featured-venue").textContent = match.venue;
     el("scoreboard").innerHTML = match.teams.map((team) => `
       <div class="score-team">
-        <span class="team-name">${escapeHtml(team.name)}</span>
+        <span class="team-identity">
+          <span class="score-team-mark">${team.logo ? `<img src="${escapeHtml(team.logo)}" alt="" referrerpolicy="no-referrer">` : escapeHtml(team.short.slice(0, 2))}</span>
+          <span class="team-name">${escapeHtml(team.name)}</span>
+        </span>
         <span class="team-score">${escapeHtml(team.score)} ${team.overs ? `<small>${escapeHtml(team.overs)}</small>` : ""}</span>
       </div>`).join("");
     el("match-state").textContent = match.state;
     el("score-source-note").innerHTML = match.source === "sportscore"
       ? `${escapeHtml(match.sourceMessage)} <a href="${escapeHtml(match.sourceUrl)}" rel="dofollow">View on SportScore</a>.`
       : "Scores shown are demonstration data, not live scores.";
-    el("pulse-value").textContent = match.pulse;
-    el("pulse-copy").textContent = match.pulseCopy;
-  }
-
-  function renderInsights(match) {
-    const insight = match.insights[state.mode];
-    el("momentum-title").textContent = match.momentumTitle;
-    el("momentum-chart").setAttribute("aria-label", `${match.momentumTitle}. ${insight.caption}`);
-    el("momentum-chart").innerHTML = match.momentum.map((value, index) => `
-      <span class="momentum-bar" aria-hidden="true">
-        <span class="momentum-fill ${value > 0 ? "positive" : value < 0 ? "negative" : "neutral"}" style="--height: ${value === 0 ? 0 : Math.max(8, Math.abs(value))}%;"></span>
-        <span class="momentum-label">${escapeHtml(match.momentumLabels[index])}</span>
-      </span>`).join("");
-    el("momentum-caption").textContent = insight.caption;
-    el("turning-over").textContent = match.turningOver;
-    el("turning-title").textContent = insight.title;
-    el("turning-copy").textContent = insight.copy;
-    el("impact-stats").innerHTML = insight.stats.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
-  }
-
-  function renderTimeline(match) {
-    el("timeline").innerHTML = match.timeline.map(([over, title, copy]) => `
-      <li class="timeline-item"><span class="timeline-over">${escapeHtml(over)}</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(copy)}</p></li>`).join("");
   }
 
   function renderCatchUp(match) {
@@ -285,7 +251,6 @@
     setFollowedTeams(updated);
     renderFollowButton(selectedMatch());
     renderMyCricket();
-    if (state.newsFilter === "Following") renderNews();
   }
 
   function renderMyCricket() {
@@ -331,32 +296,9 @@
     if (!match) return;
     renderMatchCards();
     renderScoreboard(match);
-    renderInsights(match);
-    renderTimeline(match);
     renderCatchUp(match);
     renderFollowButton(match);
     renderMyCricket();
-  }
-
-  function renderNewsFilters() {
-    const categories = ["All", ...new Set(data.news.map((story) => story.category)), "Following"];
-    if (!categories.includes(state.newsFilter)) state.newsFilter = "All";
-    el("news-filters").innerHTML = categories.map((category) => `
-      <button type="button" data-news-filter="${category}" aria-pressed="${category === state.newsFilter}">${category}</button>`).join("");
-  }
-
-  function renderNews() {
-    const followed = getFollowedTeams();
-    const stories = data.news.filter((story) => {
-      if (state.newsFilter === "All") return true;
-      if (state.newsFilter === "Following") return followed.includes(story.team);
-      return story.category === state.newsFilter;
-    });
-    el("news-grid").innerHTML = stories.length ? stories.map((story) => `
-      <article class="news-card">
-        <div class="news-meta"><span class="team-tag">${escapeHtml(story.category)} / ${escapeHtml(story.team)}</span><span>${escapeHtml(story.time)}</span></div>
-        <h3>${escapeHtml(story.title)}</h3><p>${escapeHtml(story.excerpt)}</p>
-      </article>`).join("") : `<p class="empty-state">Follow a team from a match to see its stories here.</p>`;
   }
 
   function renderDataStatus(message) {
@@ -368,12 +310,17 @@
 
   async function loadSportScoreMatches(options = {}) {
     const refreshButton = el("refresh-scores");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
     refreshButton.disabled = true;
     refreshButton.textContent = "Refreshing...";
     if (!options.silent) el("data-status").textContent = "Loading SportScore cricket data...";
 
     try {
-      const response = await fetch(SPORT_SCORE_URL, { headers: { Accept: "application/json" } });
+      const response = await fetch(SPORT_SCORE_URL, {
+        headers: { Accept: "application/json" },
+        signal: controller.signal
+      });
       if (!response.ok) throw new Error(`SportScore returned ${response.status}`);
       const payload = await response.json();
       if (!Array.isArray(payload.matches) || payload.matches.length === 0) {
@@ -385,7 +332,7 @@
         ...payload.matches.filter((match) => ["live", "inprogress", "in_progress"].includes(match.status)),
         ...payload.matches.filter((match) => match.status === "upcoming"),
         ...payload.matches.filter((match) => match.status === "finished")
-      ].slice(0, 6);
+      ].slice(0, 4);
       data.matches = prioritisedMatches.map((match, index) => mapSportScoreMatch(match, index, payload.updated));
       state.scoreSource = "sportscore";
       state.lastUpdated = payload.updated || new Date().toISOString();
@@ -409,6 +356,7 @@
       }
       console.warn("MatchPulse data fallback:", error.message);
     } finally {
+      window.clearTimeout(timeout);
       refreshButton.disabled = false;
       refreshButton.textContent = "Refresh scores";
     }
@@ -485,15 +433,6 @@
     selectMatch(card.dataset.matchId);
   });
 
-  document.querySelector(".mode-switch").addEventListener("click", (event) => {
-    const button = event.target.closest("[data-mode]");
-    if (!button) return;
-    state.mode = button.dataset.mode;
-    savePreferences();
-    document.querySelectorAll("[data-mode]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-    renderInsights(selectedMatch());
-  });
-
   el("catch-up-button").addEventListener("click", () => {
     const panel = el("catch-up-panel");
     panel.hidden = !panel.hidden;
@@ -524,15 +463,6 @@
     }
   });
 
-  el("news-filters").addEventListener("click", (event) => {
-    const button = event.target.closest("[data-news-filter]");
-    if (!button) return;
-    state.newsFilter = button.dataset.newsFilter;
-    savePreferences();
-    renderNewsFilters();
-    renderNews();
-  });
-
   el("refresh-scores").addEventListener("click", () => loadSportScoreMatches());
   el("share-catch-up").addEventListener("click", shareCatchUp);
   el("alerts-toggle").addEventListener("change", (event) => updateAlertPreference(event.target.checked));
@@ -551,14 +481,9 @@
     menuButton.textContent = "Menu";
   });
 
-  document.querySelectorAll("[data-mode]").forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode));
-  });
   const storedAlerts = readStoredJson(STORAGE_KEYS.alerts, false);
   el("alerts-toggle").checked = Boolean(storedAlerts && "Notification" in window && Notification.permission === "granted");
   renderSelectedMatch();
-  renderNewsFilters();
-  renderNews();
   loadSportScoreMatches();
   window.setInterval(() => loadSportScoreMatches({ silent: true }), REFRESH_INTERVAL);
 }());

@@ -1,7 +1,7 @@
 {
   "name": "MatchPulse",
   "short_name": "MatchPulse",
-  "description": "Live cricket scores, match context and concise summaries.",
+  "description": "Current cricket scores, followed teams and concise Catch Me Up summaries.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f7f8f5",

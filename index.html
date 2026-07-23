@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Follow cricket scores, match insights, momentum and concise Catch Me Up summaries with MatchPulse.">
+  <meta name="description" content="Follow current cricket scores, favourite teams and concise Catch Me Up summaries with MatchPulse.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#102a38">
   <link rel="canonical" href="https://pnkj2021.github.io/matchpulse/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Live Cricket Scores & Match Insights | MatchPulse">
-  <meta property="og:description" content="Open the score and understand the match in 30 seconds.">
+  <meta property="og:title" content="Current Cricket Scores & Team Updates | MatchPulse">
+  <meta property="og:description" content="See current scores and catch up on the matches that matter to you.">
   <meta property="og:url" content="https://pnkj2021.github.io/matchpulse/">
   <meta property="og:image" content="https://pnkj2021.github.io/matchpulse/assets/matchpulse-social.png">
   <meta property="og:image:alt" content="A cricket ball beside the crease at a sunlit stadium">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Live Cricket Scores & Match Insights | MatchPulse">
-  <meta name="twitter:description" content="Open the score and understand the match in 30 seconds.">
+  <meta name="twitter:title" content="Current Cricket Scores & Team Updates | MatchPulse">
+  <meta name="twitter:description" content="See current scores and catch up on the matches that matter to you.">
   <meta name="twitter:image" content="https://pnkj2021.github.io/matchpulse/assets/matchpulse-social.png">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
-  <title>Live Cricket Scores &amp; Match Insights | MatchPulse</title>
+  <title>Current Cricket Scores &amp; Team Updates | MatchPulse</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
@@ -36,8 +36,7 @@
       <nav class="primary-nav" aria-label="Primary navigation">
         <a href="#matches">Matches</a>
         <a href="#my-cricket">My Cricket</a>
-        <a href="#insights">Insights</a>
-        <a href="#news">News</a>
+        <a href="learn.html">Learn</a>
       </nav>
       <div class="header-actions">
         <span class="demo-label" id="header-data-label">Loading scores</span>
@@ -47,8 +46,7 @@
     <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
       <a href="#matches">Matches</a>
       <a href="#my-cricket">My Cricket</a>
-      <a href="#insights">Insights</a>
-      <a href="#news">News</a>
+      <a href="learn.html">Learn</a>
     </nav>
   </header>
 
@@ -59,7 +57,7 @@
           <p class="eyebrow">The match desk</p>
           <h1 id="matches-title">Cricket, with the context intact.</h1>
         </div>
-        <p class="section-intro">Choose a match to see the score, the momentum, and what shaped it.</p>
+        <p class="section-intro">Current scores, followed teams, and what changed since your last visit.</p>
       </div>
       <div class="data-toolbar">
         <p class="data-status" id="data-status" role="status" aria-live="polite">Loading SportScore cricket data...</p>
@@ -84,12 +82,6 @@
           <button class="secondary-button" id="follow-button" type="button" aria-pressed="false"></button>
         </div>
       </div>
-      <aside class="context-rail" aria-labelledby="pulse-title">
-        <p class="eyebrow">MatchPulse index</p>
-        <div class="pulse-score"><strong id="pulse-value"></strong><span>/ 100</span></div>
-        <h2 id="pulse-title">How alive is this contest?</h2>
-        <p id="pulse-copy"></p>
-      </aside>
     </section>
 
     <section class="catch-up-panel" id="catch-up-panel" hidden aria-labelledby="catch-up-title">
@@ -132,114 +124,6 @@
       <p class="action-status alert-status" id="alert-status" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="insights-section" id="insights" aria-labelledby="insights-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Read the game</p>
-          <h2 id="insights-title">What the scorecard misses</h2>
-        </div>
-        <div class="mode-switch" role="group" aria-label="Insight detail level">
-          <button type="button" data-mode="simple" aria-pressed="true">Simple</button>
-          <button type="button" data-mode="expert" aria-pressed="false">Expert</button>
-        </div>
-      </div>
-      <div class="insight-grid">
-        <article class="momentum-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Momentum</p>
-              <h3 id="momentum-title"></h3>
-            </div>
-            <span class="momentum-key"><i></i> Advantage</span>
-          </div>
-          <div class="momentum-chart" id="momentum-chart" role="img"></div>
-          <p class="chart-caption" id="momentum-caption"></p>
-        </article>
-        <article class="turning-point-panel">
-          <p class="eyebrow">Turning point</p>
-          <p class="turning-over" id="turning-over"></p>
-          <h3 id="turning-title"></h3>
-          <p id="turning-copy"></p>
-          <dl class="impact-stats" id="impact-stats"></dl>
-        </article>
-      </div>
-    </section>
-
-    <section class="timeline-section" aria-labelledby="timeline-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Ball-by-ball, distilled</p>
-          <h2 id="timeline-title">Match timeline</h2>
-        </div>
-      </div>
-      <ol class="timeline" id="timeline"></ol>
-    </section>
-
-    <section class="news-section" id="news" aria-labelledby="news-title">
-      <div class="section-heading news-heading">
-        <div>
-          <p class="eyebrow">From the cricket desk</p>
-          <h2 id="news-title">News &amp; analysis</h2>
-        </div>
-        <span class="demo-label">Demonstration stories</span>
-      </div>
-      <div class="news-filters" id="news-filters" role="group" aria-label="Filter news by category"></div>
-      <div class="news-grid" id="news-grid"></div>
-    </section>
-
-    <section class="guide-section" id="cricket-guide" aria-labelledby="guide-title">
-      <div class="guide-lead">
-        <p class="eyebrow">Cricket, explained</p>
-        <h2 id="guide-title">How to read a cricket match beyond the score</h2>
-        <p>A cricket score records runs and wickets, but it does not always reveal which side controls the contest. Match format, remaining resources, pitch behaviour and the stage of an innings all change what a total means. A modest score can be competitive on a difficult surface, while a fast start can still leave a chasing team exposed if wickets fall together.</p>
-      </div>
-      <div class="guide-columns">
-        <article>
-          <h3>Start with the match situation</h3>
-          <p>In a run chase, compare the target with the current score and the number of wickets available. Required run rate matters in limited-overs cricket, but wickets determine how aggressively a batting side can pursue it. In Test cricket, time, the first-innings deficit and the condition of the ball can matter more than the scoring rate.</p>
-          <p>Partnerships are the bridge between individual scores and the state of the match. A long stand can tire bowlers, soften the ball and force a captain into defensive fields. A cluster of wickets can reverse that progress in minutes.</p>
-        </article>
-        <article>
-          <h3>Momentum needs evidence</h3>
-          <p>Momentum is not simply the team that scored most recently. Useful indicators include wickets, boundary frequency, dot-ball pressure, control percentage and whether the required rate is rising. Context also matters: ten quiet balls may favour the bowler in a T20 chase but be sensible batting late on a difficult Test-match day.</p>
-          <p>MatchPulse only displays deeper analysis when the available data supports it. Aggregate score feeds can show the state of play, but delivery-level events are required for trustworthy turning points and probability models.</p>
-        </article>
-        <article>
-          <h3>Follow the next decisive phase</h3>
-          <p>The best way to understand a live match is to ask what matters next. That may be surviving the new ball, attacking a fifth bowler, reaching the innings break with wickets intact or preventing a required rate from climbing beyond control.</p>
-          <p>A concise match summary should answer three questions: where the game stands, what recently changed and what could decide the next passage. That is the purpose of Catch Me Up and the personal score history saved in your browser.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="faq-section" id="faq" aria-labelledby="faq-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Cricket questions</p>
-          <h2 id="faq-title">Live score FAQ</h2>
-        </div>
-      </div>
-      <details>
-        <summary>Where can I check live cricket scores?</summary>
-        <p>MatchPulse displays current and recent cricket scores supplied by SportScore, with the source and update time shown beside the match list.</p>
-      </details>
-      <details>
-        <summary>What does a cricket score such as 241/6 mean?</summary>
-        <p>The batting team has scored 241 runs and lost six wickets. The match format and number of overs provide the remaining context.</p>
-      </details>
-      <details>
-        <summary>What is required run rate in cricket?</summary>
-        <p>Required run rate is the average number of runs per over a chasing team must score to reach its target with the remaining deliveries.</p>
-      </details>
-      <details>
-        <summary>How does MatchPulse calculate momentum?</summary>
-        <p>Momentum requires ball-level evidence such as runs, wickets and pressure across recent overs. MatchPulse marks it unavailable when a feed contains only aggregate scores.</p>
-      </details>
-      <details>
-        <summary>Can I follow my favourite cricket team?</summary>
-        <p>Followed teams, recent score snapshots and display preferences are stored locally in your browser for a personalised My Cricket view.</p>
-      </details>
-    </section>
   </main>
 
   <footer class="site-footer">
@@ -250,9 +134,9 @@
         <a href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
         <a href="contact.html">Contact</a>
-        <a href="#faq">FAQ</a>
+        <a href="learn.html">Learn</a>
       </nav>
-      <p>Cricket scores made meaningful. News remains demonstration content.</p>
+      <p>Relevant cricket scores, kept simple.</p>
       <a class="sportscore-credit" href="https://sportscore.com/" rel="dofollow" title="Sports data by SportScore">Powered by SportScore</a>
     </div>
   </footer>
@@ -265,7 +149,7 @@
         "@id": "https://pnkj2021.github.io/matchpulse/#website",
         "url": "https://pnkj2021.github.io/matchpulse/",
         "name": "MatchPulse",
-        "description": "Live cricket scores, match insights and concise match summaries.",
+        "description": "Current cricket scores, favourite teams and concise match summaries.",
         "inLanguage": "en"
       },
       {
@@ -273,51 +157,6 @@
         "@id": "https://pnkj2021.github.io/matchpulse/#organization",
         "name": "MatchPulse",
         "url": "https://pnkj2021.github.io/matchpulse/"
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Where can I check live cricket scores?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "MatchPulse displays current and recent cricket scores supplied by SportScore, with the source and update time shown beside the match list."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What does a cricket score such as 241/6 mean?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The batting team has scored 241 runs and lost six wickets. The match format and number of overs provide the remaining context."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is required run rate in cricket?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Required run rate is the average number of runs per over a chasing team must score to reach its target with the remaining deliveries."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does MatchPulse calculate momentum?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Momentum requires ball-level evidence such as runs, wickets and pressure across recent overs. MatchPulse marks it unavailable when a feed contains only aggregate scores."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I follow my favourite cricket team?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Followed teams, recent score snapshots and display preferences are stored locally in the user's browser for a personalised My Cricket view."
-            }
-          }
-        ]
       }
     ]
   }
