@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MatchPulse demonstration cricket scores, context, and match insights.">
+  <title>MatchPulse | Cricket, explained</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="MatchPulse home">
+        <span class="brand-mark" aria-hidden="true">MP</span>
+        <span>MatchPulse</span>
+      </a>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="#matches">Matches</a>
+        <a href="#insights">Insights</a>
+        <a href="#news">News</a>
+      </nav>
+      <div class="header-actions">
+        <span class="demo-label">Demonstration data</span>
+        <button class="icon-button menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+      <a href="#matches">Matches</a>
+      <a href="#insights">Insights</a>
+      <a href="#news">News</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="match-strip" id="matches" aria-labelledby="matches-title">
+      <div class="section-heading compact-heading">
+        <div>
+          <p class="eyebrow">The match desk</p>
+          <h1 id="matches-title">Cricket, with the context intact.</h1>
+        </div>
+        <p class="section-intro">Choose a match to see the score, the momentum, and what shaped it.</p>
+      </div>
+      <div class="match-list" id="match-list" role="list" aria-label="Demonstration matches"></div>
+    </section>
+
+    <section class="featured" aria-live="polite" aria-atomic="false">
+      <div class="featured-main">
+        <div class="featured-meta">
+          <span class="status-pill" id="featured-status"></span>
+          <span id="featured-series"></span>
+          <span aria-hidden="true">/</span>
+          <span id="featured-venue"></span>
+        </div>
+        <div class="scoreboard" id="scoreboard"></div>
+        <p class="match-state" id="match-state"></p>
+        <p class="demo-note">Scores shown are demonstration data, not live scores.</p>
+        <div class="score-actions">
+          <button class="primary-button" id="catch-up-button" type="button" aria-expanded="false" aria-controls="catch-up-panel">Catch Me Up</button>
+          <button class="secondary-button" id="follow-button" type="button" aria-pressed="false"></button>
+        </div>
+      </div>
+      <aside class="context-rail" aria-labelledby="pulse-title">
+        <p class="eyebrow">MatchPulse index</p>
+        <div class="pulse-score"><strong id="pulse-value"></strong><span>/ 100</span></div>
+        <h2 id="pulse-title">How alive is this contest?</h2>
+        <p id="pulse-copy"></p>
+      </aside>
+    </section>
+
+    <section class="catch-up-panel" id="catch-up-panel" hidden aria-labelledby="catch-up-title">
+      <div>
+        <p class="eyebrow">The 30-second read</p>
+        <h2 id="catch-up-title" tabindex="-1">Catch Me Up</h2>
+      </div>
+      <div class="catch-up-copy" id="catch-up-copy"></div>
+      <button class="close-button" id="close-catch-up" type="button" aria-label="Close Catch Me Up">Close</button>
+    </section>
+
+    <section class="insights-section" id="insights" aria-labelledby="insights-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Read the game</p>
+          <h2 id="insights-title">What the scorecard misses</h2>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Insight detail level">
+          <button type="button" data-mode="simple" aria-pressed="true">Simple</button>
+          <button type="button" data-mode="expert" aria-pressed="false">Expert</button>
+        </div>
+      </div>
+      <div class="insight-grid">
+        <article class="momentum-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Momentum</p>
+              <h3 id="momentum-title"></h3>
+            </div>
+            <span class="momentum-key"><i></i> Advantage</span>
+          </div>
+          <div class="momentum-chart" id="momentum-chart" role="img"></div>
+          <p class="chart-caption" id="momentum-caption"></p>
+        </article>
+        <article class="turning-point-panel">
+          <p class="eyebrow">Turning point</p>
+          <p class="turning-over" id="turning-over"></p>
+          <h3 id="turning-title"></h3>
+          <p id="turning-copy"></p>
+          <dl class="impact-stats" id="impact-stats"></dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="timeline-section" aria-labelledby="timeline-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Ball-by-ball, distilled</p>
+          <h2 id="timeline-title">Match timeline</h2>
+        </div>
+      </div>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <section class="news-section" id="news" aria-labelledby="news-title">
+      <div class="section-heading news-heading">
+        <div>
+          <p class="eyebrow">From the cricket desk</p>
+          <h2 id="news-title">News &amp; analysis</h2>
+        </div>
+        <span class="demo-label">Demonstration stories</span>
+      </div>
+      <div class="news-filters" id="news-filters" role="group" aria-label="Filter news by category"></div>
+      <div class="news-grid" id="news-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">MP</span><span>MatchPulse</span></a>
+    <p>Cricket scores made meaningful. All content on this prototype is demonstration data.</p>
+  </footer>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
