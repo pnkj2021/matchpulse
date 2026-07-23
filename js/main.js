@@ -2,6 +2,7 @@
   "use strict";
 
   const data = window.MATCHPULSE_DATA;
+  const demoMatches = data.matches.slice();
   const SPORT_SCORE_URL = "https://sportscore.com/api/widget/matches/?sport=cricket&limit=12&src=matchpulse";
   const REFRESH_INTERVAL = 60000;
   const state = {
@@ -220,7 +221,7 @@
     el("data-status").textContent = message;
     el("header-data-label").textContent = state.scoreSource === "sportscore"
       ? "SportScore data"
-      : "Demonstration fallback";
+      : state.scoreSource === "stale" ? "SportScore cached" : "Demonstration fallback";
   }
 
   async function loadSportScoreMatches(options = {}) {
@@ -252,8 +253,15 @@
       renderSelectedMatch();
       renderDataStatus(`SportScore cricket feed - updated ${readableTime(state.lastUpdated)}.`);
     } catch (error) {
-      state.scoreSource = "demo";
-      renderDataStatus("SportScore is unavailable. Showing clearly labelled demonstration fallback data.");
+      const hasSportScoreData = data.matches.some((match) => match.source === "sportscore");
+      if (hasSportScoreData) {
+        state.scoreSource = "stale";
+        renderDataStatus(`Unable to refresh SportScore. Showing the last update from ${readableTime(state.lastUpdated)}.`);
+      } else {
+        data.matches = demoMatches.slice();
+        state.scoreSource = "demo";
+        renderDataStatus("SportScore is unavailable. Showing clearly labelled demonstration fallback data.");
+      }
       console.warn("MatchPulse data fallback:", error.message);
     } finally {
       refreshButton.disabled = false;
