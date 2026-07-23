@@ -24,7 +24,7 @@
         <a href="#news">News</a>
       </nav>
       <div class="header-actions">
-        <span class="demo-label">Demonstration data</span>
+        <span class="demo-label" id="header-data-label">Loading scores</span>
         <button class="icon-button menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
       </div>
     </div>
@@ -44,7 +44,11 @@
         </div>
         <p class="section-intro">Choose a match to see the score, the momentum, and what shaped it.</p>
       </div>
-      <div class="match-list" id="match-list" role="list" aria-label="Demonstration matches"></div>
+      <div class="data-toolbar">
+        <p class="data-status" id="data-status" role="status" aria-live="polite">Loading SportScore cricket data...</p>
+        <button class="refresh-button" id="refresh-scores" type="button">Refresh scores</button>
+      </div>
+      <div class="match-list" id="match-list" role="list" aria-label="Cricket matches"></div>
     </section>
 
     <section class="featured" aria-live="polite" aria-atomic="false">
@@ -57,7 +61,7 @@
         </div>
         <div class="scoreboard" id="scoreboard"></div>
         <p class="match-state" id="match-state"></p>
-        <p class="demo-note">Scores shown are demonstration data, not live scores.</p>
+        <p class="demo-note" id="score-source-note">Loading score source...</p>
         <div class="score-actions">
           <button class="primary-button" id="catch-up-button" type="button" aria-expanded="false" aria-controls="catch-up-panel">Catch Me Up</button>
           <button class="secondary-button" id="follow-button" type="button" aria-pressed="false"></button>
@@ -138,7 +142,10 @@
 
   <footer class="site-footer">
     <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">MP</span><span>MatchPulse</span></a>
-    <p>Cricket scores made meaningful. All content on this prototype is demonstration data.</p>
+    <div class="footer-copy">
+      <p>Cricket scores made meaningful. News remains demonstration content.</p>
+      <a class="sportscore-credit" href="https://sportscore.com/" rel="dofollow" title="Sports data by SportScore">Powered by SportScore</a>
+    </div>
   </footer>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
